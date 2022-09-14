@@ -96,7 +96,7 @@ How would you create a data frame?
 
 ```{r}
 #useful function data.frame()
-create_df <- data.frame("speed"=car_speed,"dist"=car_dist)
+create_df <- data.frame("speed"=car_speed,"dist"=car_dist) #creates a dataframe with column names with values from specified variables
 create_df
 ```
 
@@ -106,16 +106,16 @@ create_df
 Some useful functions to use with data frames.
 
 ```{r}
-ncol(df)  
-nrow(df)  
+ncol(df)  #number of columns
+nrow(df)  #number of variables(columns)
 length(df)  #same as ncol
-summary(df)
+summary(df) #summary statistics
 head(df) #show the first 6 rows of df
 
 #If you know the number of the column you want you can refer to that to access column
-df_2 <- df[1:10,1:2]
+df_2 <- df[1:10,1:2] #df[rows,columns]
 
 #you could also use this notation to delete columns
-df <- df[,-2]
+df <- df[,-2] #can chose to not specify any rows and it will just act on columns insteaddf
 df
 ```

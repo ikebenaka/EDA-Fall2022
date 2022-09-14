@@ -11,11 +11,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### My Git settings:
 user.name=ikebenaka
+
 ### My Git remote settings:
 origin  https://github.com/ikebenaka/EDA-Fall2022 (fetch)
 origin  https://github.com/ikebenaka/EDA-Fall2022 (push)
 upstream        https://github.com/ENV872/EDA-Fall2022 (fetch)
 upstream        DISABLE (push)
+
 ### My Git changes:
 7eecb01 (HEAD -> main) Pushing Assignment 01 to repository
 43b2cc1 Let's see if this appears

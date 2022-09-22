@@ -52,7 +52,7 @@ mean(count4) > median(count4)
 
 ```{r}
 studentname <- c("John","Lisa","Jordan","Hana")
-testscore <- c(62,83,75,100)
+testscore <- c(42,83,75,100)
 passed <- c(FALSE,TRUE,TRUE,TRUE)
 ```
 
@@ -70,7 +70,6 @@ gradebook <- data.frame(studentname,testscore,passed)
 
 ```{r}
 names(gradebook) <- c("Students","Grade","Passed")
-view(gradebook)
 ```
 
 9.  QUESTION: How is this data frame different from a matrix?
@@ -83,16 +82,21 @@ view(gradebook)
 # version with if and else
 checkgrade1 <- function(testscore){
   if(testscore > 50) {
-    print(TRUE)
+    print("TRUE")
   }
   else {
-    print(FALSE)
+    print("FALSE")
   }
 }
+checkgrade1(40)
+checkgrade1(60)
+
 # version with ifelse
 checkgrade2 <- function(testscore){
   ifelse(testscore > 50, print("TRUE"), print("FALSE"))
 }
+checkgrade2(40)
+checkgrade2(60)
 ```
 
 11. Apply your function to the vector with test scores that you created in number 5.

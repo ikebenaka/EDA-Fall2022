@@ -80,31 +80,29 @@ names(gradebook) <- c("Students","Grade","Passed")
 
 ```{r}
 # version with if and else
-checkgrade1 <- function(testscore){
+checkgrade1 <- function(testscore) {
   if(testscore > 50) {
-    print("TRUE")
+    TRUE
   }
   else {
-    print("FALSE")
+    FALSE
   }
 }
-checkgrade1(40)
-checkgrade1(60)
 
 # version with ifelse
 checkgrade2 <- function(testscore){
-  ifelse(testscore > 50, print("TRUE"), print("FALSE"))
+  ifelse(testscore > 50, TRUE, FALSE)
 }
-checkgrade2(40)
-checkgrade2(60)
+
 ```
 
 11. Apply your function to the vector with test scores that you created in number 5.
 
 ```{r}
-
+# checkgrade1(testscore) This command resulted in an error
+checkgrade2(testscore)
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer:
+> Answer: 'ifelse' worked and 'if' and 'else' did not. 'if' and 'else' did not work because it tried to run the function for each value in the vector when it can only handle one value at a time. 

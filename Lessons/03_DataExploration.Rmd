@@ -182,7 +182,7 @@ summary(USGS.flow.data.complete$discharge.mean)
 R will often import dates as factors or characters rather than dates. To fix, this we need to tell R that it is looking at dates. We also need to specify the format the dates are in. By default, if you don't provide a format, R will attempt to use %Y-%m-%d or %Y/%m/%d as a default. Note: if you are working collaboratively in an international setting, using a year-month-day format in spreadsheets is the least ambiguous of date formats. Make sure to check whether month-day-year or day-month-year is used in an ambiguously formatted spreadsheet.
 
 Formatting of dates in R: 
-
+# the % operator is used to change the format of a variable
 %d  day as number (0-31)
 %m  month (00-12, can be e.g., 01 or 1)
 %y  2-digit year

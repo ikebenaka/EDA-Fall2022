@@ -28,6 +28,7 @@ The completed exercise is due on Sept 30th.
 
 ```{r,  message = FALSE}
 library(tidyverse)
+library(lubridate)
 setwd("~/Desktop/Fall 2022/872 - Data Analytics/EDA-Fall2022")
 Neonics <- read.csv("./Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv",stringsAsFactors = TRUE)
 Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv",stringsAsFactors = TRUE)
@@ -118,29 +119,36 @@ ggplot(Neonics, aes(x = Endpoint)) +
 
 ```{r}
 class(Litter$collectDate) #This class was originally a factor.
-Litter$collectDate <- as.Date(Litter$collectDate, format = "%Y/%m/%d")
+Litter$collectDate <- ymd(Litter$collectDate)
 class(Litter$collectDate) #Recheck the class of collectDate to view new class.
-unique(Litter$collectDate)???
+unique(Litter$collectDate) #Litter was sampled on the 2nd and the 30th in August 2018.
 ```
 
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
-unique(Litter$siteID)
-summary(Litter$siteID)
+unique(Litter$plotID)
+summary(Litter$plotID)
 ```
 
-> Answer:
+> Answer: the 'unique' function only returns the names of the different plots, whereas the 'summary' function returns how many samples correspond with each plot.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
 ```{r}
-
+ggplot(Litter, aes(x = functionalGroup)) +
+  geom_bar()
 ```
 
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup.
 
 ```{r}
+#Boxplot
+ggplot(Litter) + 
+  geom_boxplot(aes(x = functionalGroup, y = dryMass))
+#Violin plot
+ggplot(Litter) + 
+  geom_violin(aes(x = functionalGroup, y = dryMass))
 
 ```
 
@@ -150,4 +158,4 @@ Why is the boxplot a more effective visualization option than the violin plot in
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer:
+> Answer: Needles tended to compose the largest amount of biomass at the sites.

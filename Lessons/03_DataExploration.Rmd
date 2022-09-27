@@ -213,7 +213,7 @@ USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y")
 Note that for every date prior to 1969, R has assigned the date in the 2000s rather than the 1900s. This can be fixed with an `ifelse` statement inside a function. Run through the code below and write what is happening in the comment above each line.
 
 ```{r Fixing dates}
-# 
+class(USGS.flow.data$datetime)
 USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d")
 
 #

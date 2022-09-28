@@ -95,20 +95,22 @@ ggplot(Neonics) +
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
 
 ```{r}
+class(Neonics$Test.Location)
 ggplot(Neonics) + 
-  geom_freqpoly(aes(x = Publication.Year), color = Test.Location) +
+  geom_freqpoly(aes(color = Test.Location, x = Publication.Year)) +
   theme(legend.position = "top")
 ```
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer: 
+> Answer: The most common test locations are "Lab" and "Field natural." Starting in 2010, "Lab" test locations increased as "Field natural" locations decreased.
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information.
 
 ```{r}
-ggplot(Neonics, aes(x = Endpoint)) +
+Endpointplots <- ggplot(Neonics, aes(x = Endpoint)) +
   geom_bar()
+Endpointplots + theme(axis.text.x = element_text(size = 5))  
 ```
 
 > Answer: LOEL and NOEL are the two most common end points. LOEL stands for lowest-observable-effect-level and NOEL stands for no-observable-effect-level.

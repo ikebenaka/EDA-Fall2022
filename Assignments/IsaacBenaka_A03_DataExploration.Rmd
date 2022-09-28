@@ -110,10 +110,10 @@ Interpret this graph. What are the most common test locations, and do they diffe
 ```{r}
 Endpointplots <- ggplot(Neonics, aes(x = Endpoint)) +
   geom_bar()
-Endpointplots + theme(axis.text.x = element_text(size = 5))  
+Endpointplots + theme(axis.text.x = element_text(size = 3))  
 ```
 
-> Answer: LOEL and NOEL are the two most common end points. LOEL stands for lowest-observable-effect-level and NOEL stands for no-observable-effect-level.
+> Answer: LOEL and NOEL are the two most common end points. LOEL stands for lowest-observable-effect-level, meaning that was the lowest dose of chemicals that produced effects that were significantly different than the control samples. NOEL stands for no-observable-effect-level, which means that is the highest dose of chemical that does not produce a significantly different response from the control sample.
 
 ## Explore your data (Litter)
 
@@ -156,8 +156,8 @@ ggplot(Litter) +
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer:
+> Answer: 
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer: Needles tended to compose the largest amount of biomass at the sites.
+> Answer: Needles, mixed litter, and twigs/branches tended to compose the largest amount of biomass at the sites.

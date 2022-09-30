@@ -73,7 +73,7 @@ summary(Neonics$Effect)
 summary(Neonics$Species.Common.Name)
 ```
 
-> Answer: The six most commonly studied species are Honey bee, Parasitic wasp, Buff tailed bumblebee, Carniolan honey bee, Bumble bee, and Italian honey bee. All these species are key pollinators, meaning their ecosystem impacts and benefits are likely superior over other insect species.
+> Answer: The six most commonly studied species are Honey bee, Parasitic wasp, Buff tailed bumblebee, Carniolan honey bee, Bumble bee, and Italian honey bee. All these species are key pollinators. Because they provide valuable ecosystem services, they may be of interest over other insects.
 
 8.  Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
 
@@ -156,7 +156,7 @@ ggplot(Litter) +
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer: 
+> Answer: With the boxplot, we are able to see the interquartile range, mean, and outliers more clearly than with the violin plot.
 
 What type(s) of litter tend to have the highest biomass at these sites?
 

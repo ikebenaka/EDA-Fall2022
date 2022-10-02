@@ -3,6 +3,8 @@ title: "Assignment 4: Data Wrangling"
 author: "Isaac Benaka"
 output: pdf_document
 geometry: margin=2.54cm
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -45,9 +47,21 @@ EPA.PM25.2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFact
 2. Explore the dimensions, column names, and structure of the datasets. 
 
 ```{r, message = FALSE}
-#1
-
-#2
+#1 dimensions
+dim(EPA.O3.2018)
+dim(EPA.O3.2019)
+dim(EPA.PM25.2018)
+dim(EPA.PM25.2019)
+#2 column names
+colnames(EPA.O3.2018)
+colnames(EPA.O3.2019)
+colnames(EPA.PM25.2018)
+colnames(EPA.PM25.2019)
+# structure
+str(EPA.O3.2018)
+str(EPA.O3.2019)
+str(EPA.PM25.2018)
+str(EPA.PM25.2019)
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -57,13 +71,19 @@ EPA.PM25.2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFact
 6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
 ```{r}
-#3
+#3 Change date format
+EPA.O3.2018$Date <- as.Date(EPA.O3.2018$Date, format = "%m/%d/%Y")
+EPA.O3.2019$Date <- as.Date(EPA.O3.2019$Date, format = "%m/%d/%Y")
+EPA.PM25.2018$Date <- as.Date(EPA.PM25.2018$Date, format = "%m/%d/%Y")
+EPA.PM25.2019$Date <- as.Date(EPA.PM25.2019$Date, format = "%m/%d/%Y")
+#4 Select columns
+EPA.O3.2018.processed <- select(EPA.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPA.O3.2018.processed <- select(EPA.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPA.O3.2018.processed <- select(EPA.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+EPA.O3.2018.processed <- select(EPA.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+#5 Fill in AQS parameter for PM2.5 dataframes
 
-#4
-
-#5
-
-#6
+#6 Save processed datasets as .csv
 
 ```
 

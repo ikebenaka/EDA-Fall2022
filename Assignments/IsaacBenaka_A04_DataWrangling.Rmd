@@ -83,7 +83,7 @@ EPA.PM25.2018.processed <- select(EPA.PM25.2018, Date, DAILY_AQI_VALUE, Site.Nam
 EPA.PM25.2019.processed <- select(EPA.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 #5 Fill in AQS parameter for PM2.5 dataframes
 EPA.PM25.2018.processed1 <- EPA.PM25.2018.processed %>%
-  mutate(AQS_PARAMETER_DESC = 
+  
 EPA.PM25.2019.processed <- select(EPA.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 #6 Save processed datasets as .csv
 

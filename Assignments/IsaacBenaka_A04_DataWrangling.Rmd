@@ -78,15 +78,26 @@ EPA.PM25.2018$Date <- as.Date(EPA.PM25.2018$Date, format = "%m/%d/%Y")
 EPA.PM25.2019$Date <- as.Date(EPA.PM25.2019$Date, format = "%m/%d/%Y")
 #4 Select columns
 EPA.O3.2018.processed <- select(EPA.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
-EPA.O3.2019.processed <- select(EPA.O3.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
-EPA.PM25.2018.processed <- select(EPA.PM25.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
-EPA.PM25.2019.processed <- select(EPA.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
-#5 Fill in AQS parameter for PM2.5 dataframes
-EPA.PM25.2018.processed1 <- EPA.PM25.2018.processed %>%
-  
-EPA.PM25.2019.processed <- select(EPA.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
-#6 Save processed datasets as .csv
 
+EPA.O3.2019.processed <- select(EPA.O3.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+EPA.PM25.2018.processed <- select(EPA.PM25.2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+EPA.PM25.2019.processed <- select(EPA.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+#5 Fill in AQS parameter for PM2.5 dataframes
+EPA.PM25.2018.processed <- mutate(EPA.PM25.2018.processed, AQS_PARAMETER_DESC = "PM2.5")
+EPA.PM25.2019.processed <- mutate(EPA.PM25.2019.processed, AQS_PARAMETER_DESC = "PM2.5")
+
+#6 Save processed datasets as .csv
+write.csv(EPA.O3.2018.processed, row.names = FALSE, 
+          file = "./Data/Processed/EPA.O3.2018.processed.csv")
+write.csv(EPA.O3.2019.processed, row.names = FALSE, 
+          file = "./Data/Processed/EPA.O3.2019.processed.csv")
+write.csv(EPA.PM25.2018.processed, row.names = FALSE, 
+          file = "./Data/Processed/EPA.PM25.2018.processed.csv")
+write.csv(EPA.PM25.2019.processed, row.names = FALSE, 
+          file = "./Data/Processed/EPA.PM25.2019.processed.csv")
 ```
 
 
@@ -105,14 +116,28 @@ EPA.PM25.2019.processed <- select(EPA.PM25.2019, Date, DAILY_AQI_VALUE, Site.Nam
 
 ```{r}
 #7
+EPA.ATM <- rbind(EPA.O3.2018.processed, EPA.O3.2019.processed, EPA.PM25.2018.processed, EPA.PM25.2019.processed)
 
 #8
+EPA.ATM <- EPA.ATM %>%
+  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name == "Pitt Agri. Center" | Site.Name == "Bryson City" | Site.Name == "Millbrook School") %>% #Include sites that data frames have in common
+  mutate(Month = month(Date)) %>% #Create new column with month number
+  mutate(Year = year(Date)) %>% #Create new column with year number
+  select(Date, Month, Year, DAILY_AQI_VALUE:SITE_LONGITUDE) %>% #reorder columns to put month and year near date
+  group_by(Date, Month, Year, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarise(meanAQI = mean(DAILY_AQI_VALUE),
+            meanlat = mean(SITE_LATITUDE),
+            meanlong = mean(SITE_LONGITUDE)) #generate daily means
 
 #9
+EPA.ATM <- pivot_wider(EPA.ATM, names_from = AQS_PARAMETER_DESC, values_from = meanAQI)
 
 #10
+dim(EPA.ATM)
 
 #11
+write.csv(EPA.ATM, row.names = FALSE, 
+          file = "./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
 
 ```
 

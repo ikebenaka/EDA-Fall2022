@@ -143,16 +143,21 @@ write.csv(EPA.ATM, row.names = FALSE,
 
 
 ## Generate summary tables
-12. Use the split-apply-combine strategy to generate a summary data frame. Data should be grouped by site, month, and year. Generate the mean AQI values for ozone and PM2.5 for each group. Then, add a pipe to remove instances where a month and year are not available (use the function `drop_na` in your pipe). 
+12. Use the split-apply-combine strategy to generate a summary data frame. Data should be grouped by site, month, and year. Generate the mean AQI values for ozone and PM2.5 for each group. Then, add a pipe to Filter out records that are missing both ozone and PM2.5 values (use the function `drop_na` in your pipe).
 
 13. Call up the dimensions of the summary dataset.
 
 ```{r}
-#12a
-
-#12b
+#12
+EPA.ATM.summary <- 
+  EPA.ATM %>%
+  group_by(Site.Name, Month, Year) %>%
+  summarise(mean.AQI.PM2.5 = mean(PM2.5),
+    mean.AQI.Ozone = mean(Ozone))
+  #filter(!is.na(mean.AQI.Ozone) & !is.na(mean.AQI.PM2.5))
 
 #13
+dim(EPA.ATM.summary)
 
 ```
 

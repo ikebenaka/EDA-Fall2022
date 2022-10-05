@@ -153,8 +153,8 @@ EPA.ATM.summary <-
   EPA.ATM %>%
   group_by(Site.Name, Month, Year) %>%
   summarise(mean.AQI.PM2.5 = mean(PM2.5),
-    mean.AQI.Ozone = mean(Ozone))
-  #filter(!is.na(mean.AQI.Ozone) & !is.na(mean.AQI.PM2.5))
+    mean.AQI.Ozone = mean(Ozone)) %>%
+  drop_na(mean.AQI.PM2.5, mean.AQI.Ozone)
 
 #13
 dim(EPA.ATM.summary)
@@ -163,4 +163,4 @@ dim(EPA.ATM.summary)
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
-> Answer: 
+> Answer: 'na.omit' is designed to remove all instances of NAs in an entire dataset. The 'drop_na' function is better because you can easily specify which columns to remove NAs from.

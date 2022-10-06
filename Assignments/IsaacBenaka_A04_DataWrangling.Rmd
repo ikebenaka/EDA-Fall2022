@@ -12,7 +12,8 @@ editor_options:
 #For it to work, the "formatR" package needs to be installed
 
 #install.packages('formatR')
-knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+#knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=45), tidy=TRUE)
 ```
 
 ## OVERVIEW
@@ -33,7 +34,7 @@ The completed exercise is due on Friday, Oct7th @ 5:00pm.
 
 ```{r, message = FALSE}
 getwd()
-setwd("~/Desktop/Fall 2022/872 - Data Analytics/EDA-Fall2022")
+#setwd("~/Desktop/Fall 2022/872 - Data Analytics/EDA-Fall2022")
 #install.packages(tidyverse)
 library(tidyverse)
 #install.packages(lubridate)
@@ -116,11 +117,19 @@ write.csv(EPA.PM25.2019.processed, row.names = FALSE,
 
 ```{r}
 #7
-EPA.ATM <- rbind(EPA.O3.2018.processed, EPA.O3.2019.processed, EPA.PM25.2018.processed, EPA.PM25.2019.processed)
+EPA.ATM <- rbind(EPA.O3.2018.processed, 
+                 EPA.O3.2019.processed, EPA.PM25.2018.processed, EPA.PM25.2019.processed)
 
 #8
 EPA.ATM <- EPA.ATM %>%
-  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name == "Pitt Agri. Center" | Site.Name == "Bryson City" | Site.Name == "Millbrook School") %>% #Include sites that data frames have in common
+  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" 
+         | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" 
+         | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" 
+         | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" 
+         | Site.Name == "Castle Hayne" | Site.Name == "Pitt Agri. Center" 
+         | Site.Name == "Bryson City" | 
+           Site.Name == "Millbrook School") %>% 
+  #Include sites that data frames have in common
   mutate(Month = month(Date)) %>% #Create new column with month number
   mutate(Year = year(Date)) %>% #Create new column with year number
   select(Date, Month, Year, DAILY_AQI_VALUE:SITE_LONGITUDE) %>% #reorder columns to put month and year near date

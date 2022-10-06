@@ -158,7 +158,7 @@ print(tempvsdepth)
 NvsP <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth)) + # the color of the points will change as a function of their depth
   geom_point() +
-  geom_smooth(method = lm) + #the 'smooth' geometry creates a trend line based on the method you select. Here, we have chosen "method = l(inear)m(odel) to create a linear trend line.
+  geom_smooth(method = lm) #the 'smooth' geometry creates a trend line based on the method you select. Here, we have chosen "method = l(inear)m(odel) to create a linear trend line.
   geom_abline(aes(slope = 16, intercept = 0)) #the 'abline' geometry generates a line with a given slope and intercept. Can be used to compare against trend lines that you plot from the data you choose for your plot.
 print(NvsP)
 

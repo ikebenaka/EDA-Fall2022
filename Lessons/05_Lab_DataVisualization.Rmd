@@ -20,7 +20,7 @@ editor_options:
 #This code chunk will tidy your knit PDF files, wrapping long code lines
 #For it to work, the "formatR" package needs to be installed
 
-#install.packages('formatR')
+install.packages('formatR')
 knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
 ```
 
@@ -43,7 +43,7 @@ The expression function can be used when you want to add mathematical symbols an
 Plot_text <-
 ggplot(data=data.frame(x=0,y=0))+
   geom_point(aes(x=x,y=y)) +
-  geom_text(x=0,y=0.025,label=expression(paste("Mean is ", mu,",", R^{2},'=0.6')))
+  geom_text(x=0,y=0.025,label=expression(paste("Mean is ", mu,",", R^{2},'=0.6'))) #'expression' adds text to the plot and you specify its position before.
 print(Plot_text)
 
 ggsave("./Output/Plot_text.jpg",Plot_text, height = 4, width = 6, units = "in", dpi = 300)
@@ -72,9 +72,13 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 
 # 1. 
 # Plot surface temperatures by day of  year. 
+PeterPaul.chem.nutrients.surf <- PeterPaul.chem.nutrients %>%
+  filter(depth == 0)
 # Color your points by year, and facet by lake in two rows.
 # Change the ylab name
-
+ggplot(PeterPaul.chem.nutrients.surf) + 
+  geom_point(aes(x = daynum, y = temperature_C, color = year4)) +
+  facet_wrap(vars(lakename), nrow = 2)
 
 #2. 
 # Plot temperature by date. Color your points by depth.
@@ -82,6 +86,12 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Change the color palette to magma and play with direction (+- 1), which one makes more sense?
 # Change x axis to include marker/labels every 5 years
 
+ggplot(PeterPaul.chem.nutrients) + 
+  geom_point(aes(x = sampledate, y = temperature_C, color = depth), size = .5) + 
+  scale_color_viridis(option = "magma", direction = -1) + #-1 direction makes more sense because warmer temperatures are represented by brighter colors.
+  ylab("Temperature (C)") + #specify y axis title
+  xlab("") + #we dont want an x axis title 
+  scale_x_date(date_breaks = "5 years",date_labels = "%Y") #specify how large the breaks should be and specify that the labels should list years
 
 
 
@@ -97,8 +107,9 @@ Exercise: Plot relationships between air quality measurements
 # Make the points 50 % transparent
 # Add a line of best fit for the linear regression of these variables.
 
-
-
+ggplot(EPAair, (aes(x = PM2.5, y = Ozone))) + 
+  geom_point(aes(color = meanlat), alpha = .5)+
+  geom_smooth(method=lm)
 
 ```
 
@@ -111,8 +122,8 @@ Exercise: Plot distributions of AQI values for EPAair.
 # 4. 
 # Create several types of plots depicting PM2.5, divided by year. 
 # Choose which plot displays the data best and justify your choice. 
-
-
+ggplot(EPAair)+
+  geom_violin(aes(x = as.factor(Year), y = PM2.5))
 
 ```
 

@@ -43,7 +43,7 @@ getwd()
 library(tidyverse)
 options(scipen = 4)
 
-PeterPaul.chem.nutrients <- read.csv("./Data_2022sp/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+PeterPaul.chem.nutrients <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
 
 # Set theme
 mytheme <- theme_classic(base_size = 14) +
@@ -193,7 +193,7 @@ Paul.naomit <- PeterPaul.chem.nutrients %>%
   na.omit()
 
 TPAIC <- lm(data = Paul.naomit, tp_ug ~ depth + dissolvedOxygen + 
-              temperature_C + tn_ug + po4)
+              temperature_C + tn_ug + po4) #tu_ug will be a function of depth, DO, T, nitrogen content, and phosphorus content. We are considering these 5 variables to be explanatory variables.
 
 #Choose a model by AIC in a Stepwise Algorithm
 step(TPAIC)

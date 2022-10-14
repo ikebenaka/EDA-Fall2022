@@ -1,8 +1,10 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Isaac Benaka"
 output: pdf_document
 geometry: margin=2.54cm
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -40,16 +42,27 @@ the processed data file for the Niwot Ridge litter dataset (use the
 
 ```{r}
 #1 
-
+getwd()
+library(tidyverse)
+library(lubridate)
+library(cowplot)
+PeterPaul.chem.nutrients <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv",stringsAsFactors = T)
+Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv")
 #2 
-
+class(Litter$collectDate)
+Litter$collectDate <- as.Date(Litter$collectDate, format = "%Y-%m-%d")
+class(PeterPaul.chem.nutrients$sampledate)
+PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
 ```
 ## Define your theme
 3. Build a theme and set it as your default theme.
 
 ```{r}
 #3
-
+iketheme <- theme_bw(base_size = 12) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(iketheme)
 ```
 
 ## Create graphs
@@ -64,7 +77,10 @@ limits using `xlim()` and/or `ylim()`).
 
 ```{r}
 #4
-
+UGvsPO4plot <- ggplot(PeterPaul.chem.nutrients, (aes(x=tp_ug, y=po4, color=lakename))) +
+  ylim(0, 50)+
+  geom_point()+
+  geom_smooth(method="lm", se = FALSE, color = "black")
 ```
 
 
@@ -78,6 +94,16 @@ see <https://r-lang.com/month-abb-in-r-with-example>
 
 ```{r}
 #5
+Tplot <- ggplot(PeterPaul.chem.nutrients, (aes(x=month, y=temperature_C)))+
+  geom_boxplot(aes(color=lakename))
+print(Tplot)
+TPplot <- ggplot(PeterPaul.chem.nutrients, (aes(x=month, y=tp_ug)))+
+  geom_boxplot(aes(color=lakename))
+TNplot <- ggplot(PeterPaul.chem.nutrients, (aes(x=month, y=tn_ug)))+
+  geom_boxplot(aes(color=lakename))
+print(TNplot)
+
+plot_grid(Tplot, TPplot, TNplot, ncol = 1, align = "v")
 
 ```
 

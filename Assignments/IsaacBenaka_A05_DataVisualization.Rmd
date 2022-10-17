@@ -94,7 +94,7 @@ see <https://r-lang.com/month-abb-in-r-with-example>
 
 ```{r}
 #5
-Tplot <- ggplot(PeterPaul.chem.nutrients, (aes(x=month, y=temperature_C)))+
+Tplot <- ggplot(PeterPaul.chem.nutrients, aes(x=month, y=temperature_C))+
   geom_boxplot(aes(color=lakename))
 print(Tplot)
 TPplot <- ggplot(PeterPaul.chem.nutrients, (aes(x=month, y=tp_ug)))+

@@ -122,7 +122,13 @@ three facets rather than separated by color.
 
 ```{r}
 #6
+Litter.needles <- Litter %>% #Filter out all litter groups except for "Needles"
+  filter(Litter$functionalGroup == "Needles")
+ggplot(Litter.needles, (aes(x = collectDate, y = dryMass, color=nlcdClass)))+
+  geom_bar()
 
+ggplot(Litter.needles, color=nlcdClass) 
+  geom_bar(aes(x = collectDate, y = dryMass))
 #7
 
 

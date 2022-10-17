@@ -19,7 +19,7 @@ library(tidyverse)
 #install.packages("agricolae")
 library(agricolae)   #you may need to install/update package "htmltools" before installing and loading agricolae
 
-Litter <- read.csv("./Data_2022sp/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
+Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 
 # Set date to date format
 Litter$collectDate <- as.Date(Litter$collectDate , format = "%Y-%m-%d")
@@ -50,7 +50,7 @@ summary(Litter.Totals$plotID)
 # not necessarily normality of raw data. See below when we plot the model.
 # shapiro.test() performs the Shapiro-Wilk test of the null that data follows a normal distribution
 
-shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_040"])
+shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_040"]) #For each one, looking at dry mass and filtering by the site name
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_041"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_046"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_047"])
@@ -94,7 +94,7 @@ TukeyHSD(Litter.Totals.anova)
 
 # Extract groupings for pairwise relationships
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
-Litter.Totals.groups
+Litter.Totals.groups #Letters indicate which groups are considered to have the same mean. If two groups contain different letters, then they have a significantly different mean.
 
 # Graph the results
 Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = plotID, y = dryMass)) +
@@ -106,6 +106,7 @@ Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = plotID, y = dryMass)) +
   labs(x = "Plot ID", y = "Dry Mass (g)") +
   ylim(0, 85)
 print(Litter.Totals.plot)
+# If we wanted to present this information in a report, we would want all the similar groups next to each other in the chart.
 ```
 
 What information does the output give us? How might we report this information in a report?
@@ -121,14 +122,14 @@ For example: What if we wanted to know how litter masses varied across functiona
 ```{r}
 # Format as aov
 Litter.anova.2way <- aov(data = Litter, dryMass ~ functionalGroup + nlcdClass)
-summary(Litter.anova.2way)
+summary(Litter.anova.2way) #the p value here indicates that our means are different, but does not tell us which ones are different.
 
 # Format as lm
 Litter.anova.2way2 <- lm(data = Litter, dryMass ~ functionalGroup + nlcdClass)
-summary(Litter.anova.2way2)
+summary(Litter.anova.2way2) #This shows p-value for each functional group litter type and land cover. 
 
 # Run a post-hoc test for pairwise differences
-TukeyHSD(Litter.anova.2way)
+TukeyHSD(Litter.anova.2way) #This gets us even more information
 
 ```
 
@@ -141,7 +142,7 @@ The output gives test statistics for each explanatory variable as well as the in
 ```{r}
 # Format as aov
 Litter.anova.2way3 <- aov(data = Litter, dryMass ~ functionalGroup * nlcdClass)
-summary(Litter.anova.2way3)
+summary(Litter.anova.2way3) #Gives significance of functional group interaction with land cover class
 
 # Format as lm
 Litter.anova.2way4 <- lm(data = Litter, dryMass ~ functionalGroup * nlcdClass)

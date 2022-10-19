@@ -17,13 +17,16 @@ editor_options:
 ## Set up
 ```{r, message = FALSE}
 library(tidyverse)
-library(agricolae)   
+library(agricolae)  
+library(viridis)
+library(RColorBrewer)
+library(colormap)
 
-EPAair <- read.csv("./Data_2022sp/Processed/EPAair_O3_PM25_NC1819_Processed.csv", stringsAsFactors = TRUE)
+EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv", stringsAsFactors = TRUE)
 # Set date to date format
 EPAair$Date <- as.Date(EPAair$Date, format = "%Y-%m-%d")
 
-Litter <- read.csv("./Data_2022sp/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
+Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 # Set date to date format
 Litter$collectDate <- as.Date(Litter$collectDate , format = "%Y-%m-%d")
 
@@ -46,7 +49,28 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 
 ```{r}
 #Exercise 1:
-
+#1.
+O3Densityplot <- ggplot(EPAair, aes(x=Ozone, fill = as.factor(Year)))+
+  geom_density(alpha=.5)+
+  scale_fill_manual(values=c("darkgreen", "darkblue"))+
+  labs(x="Ozone AQI Value", y="Density", fill="")
+plot(O3Densityplot)
+#2.
+O3Boxplot <- ggplot(EPAair, aes(x=as.factor(Year), y=Ozone))+
+  geom_boxplot()+
+  stat_summary(geom = "text", fun = max, vjust=-1, size=4,
+               label=c("b","a"))+
+  labs(x="","Ozone AQI value")+
+  ylim(0,150)
+plot(O3Boxplot)
+#3.
+O3Violinplot <- ggplot(EPAair, aes(x=as.factor(Year), y=Ozone))+
+  geom_violin()+
+  stat_summary(geom = "text", fun = max, vjust=-1, size=4,
+               label=c("b","a"))+
+  labs(x="","Ozone AQI value")+
+  ylim(0,150)
+plot(O3Violinplot)
 
 ```
 
@@ -59,12 +83,15 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 ```{r}
 
 #Exercise 2: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
-
-
+regression <- lm(EPAair$PM2.5 ~ EPAair$Ozone)
+summary(regression)
+# p-value=2.2e^-16 and R2=0.1314
 
 #Exercise 3: Build a scatterplot. Add a line and standard error for the linear regression. Add the regression equation to the plot
-
-
+PMbyO3 <- ggplot(EPAair, aes(x=Ozone,y=PM2.5))+
+  geom_point()+
+  geom_smooth(method = "lm", se=FALSE)
+print(PMbyO3)
 
 ```
 

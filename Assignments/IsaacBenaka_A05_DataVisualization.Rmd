@@ -53,6 +53,8 @@ class(Litter$collectDate)
 Litter$collectDate <- as.Date(Litter$collectDate, format = "%Y-%m-%d")
 class(PeterPaul.chem.nutrients$sampledate)
 PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
+class(PeterPaul.chem.nutrients$month)
+PeterPaul.chem.nutrients$month <- factor(PeterPaul.chem.nutrients$month, levels = c(1:12))
 ```
 ## Define your theme
 3. Build a theme and set it as your default theme.
@@ -81,6 +83,7 @@ UGvsPO4plot <- ggplot(PeterPaul.chem.nutrients, (aes(x=tp_ug, y=po4, color=laken
   ylim(0, 50)+
   geom_point()+
   geom_smooth(method="lm", se = FALSE, color = "black")
+print(UGvsPO4plot)
 ```
 
 
@@ -103,14 +106,18 @@ TNplot <- ggplot(PeterPaul.chem.nutrients, (aes(x=month, y=tn_ug)))+
   geom_boxplot(aes(color=lakename))
 print(TNplot)
 
-plot_grid(Tplot, TPplot, TNplot, ncol = 1, align = "v")
-
+combinedplot <- plot_grid(
+  Tplot + theme(legend.position="none"),
+  TPplot + theme(legend.position="none"),
+  TNplot + theme(legend.position="bottom"), 
+  ncol = 1, align = "vh", axis = "b") #How do we get it to show each month as a label?
+print(combinedplot)
 ```
 
 Question: What do you observe about the variables of interest over seasons 
 and between lakes? 
 
-> Answer: 
+> Answer: Temperature for both lakes rises during the summer months and begins to decrease going into the autumnal months. Overall, phosphorus measurements were fairly consistent for both lakes over time, but did rise in September. Peter Lake has a higher phosphorus concentration compared to Paul Lake. Similarly, nitrogen levels were also consistent over time, and Peter Lake had slightly higher nitrogen, but the means were fairly close. Peter Lake had more outlying measurements for both nitrogen and phosphorus compared to Paul Lake.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the 
 "Needles" functional group. Plot the dry mass of needle litter by date and 
@@ -125,14 +132,17 @@ three facets rather than separated by color.
 Litter.needles <- Litter %>% #Filter out all litter groups except for "Needles"
   filter(Litter$functionalGroup == "Needles")
 ggplot(Litter.needles, (aes(x = collectDate, y = dryMass, color=nlcdClass)))+
-  geom_bar()
+  geom_density_ridges()
 
-ggplot(Litter.needles, color=nlcdClass) 
-  geom_bar(aes(x = collectDate, y = dryMass))
+ggplot(Litter.needles)+
+  geom_line(aes(x = collectDate, y = dryMass, color=nlcdClass))
+  
 #7
-
+ggplot(Litter.needles)+ 
+  geom_line(aes(x = collectDate, y = dryMass))+
+  facet_wrap(vars(nlcdClass), nrow = 3)
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer: The plot that is separated into facets is a more effective presentation of the data because it is easier to discern trends of the separate litter groups. When overlayed on eachother with different colors separating them, the litter groups are harder to identify from one another.

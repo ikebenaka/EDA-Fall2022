@@ -62,7 +62,7 @@ PeterPaul.chem.nutrients$month <- factor(PeterPaul.chem.nutrients$month, levels 
 
 ```{r}
 #3
-iketheme <- theme_bw(base_size = 12) +
+iketheme <- theme_bw(base_size = 8) +
   theme(axis.text = element_text(color = "black"), 
         legend.position = "top")
 theme_set(iketheme)
@@ -124,8 +124,8 @@ print(TNplot)
 combinedplot <- plot_grid(
   Tplot + theme(legend.position="none"),
   TPplot + theme(legend.position="none"),
-  TNplot + theme(legend.position="bottom"), 
-  ncol = 1, align = "vh", axis = "b")
+  TNplot + theme(legend.position="bottom"),
+  rel_heights = c(2,2,4), ncol = 1, align = "v", axis = "b")
 print(combinedplot)
 ```
 

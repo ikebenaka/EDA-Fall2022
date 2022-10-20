@@ -124,8 +124,8 @@ print(TNplot)
 combinedplot <- plot_grid(
   Tplot + theme(legend.position="none"),
   TPplot + theme(legend.position="none"),
-  TNplot + theme(legend.position="bottom"), 
-  ncol = 1, align = "vh", axis = "b")
+  TNplot + theme(legend.position="bottom"),
+  rel_heights = c(2,2,4), ncol = 1, align = "v", axis = "b")
 print(combinedplot)
 ```
 

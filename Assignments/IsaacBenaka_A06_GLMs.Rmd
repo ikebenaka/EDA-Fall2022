@@ -12,7 +12,7 @@ editor_options:
 #For it to work, the "formatR" package needs to be installed
 
 #install.packages('formatR')
-knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 ```
 
 ## OVERVIEW
@@ -34,10 +34,23 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r setup}
 #1
+getwd()
+library(tidyverse)
+library(agricolae)
+library(lubridate)
+library(cowplot)
 
+ChemPhysRaw <- read.csv(
+  "./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",stringsAsFactors = T)
+class(ChemPhysRaw$sampledate)
+ChemPhysRaw$sampledate <- as.Date(ChemPhysRaw$sampledate, format= "%m-%d-%y")
+class(ChemPhysRaw$sampledate)
 
 #2
-
+iketheme <- theme_bw(base_size = 8) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(iketheme)
 
 ```
 
@@ -46,8 +59,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: 
-Ha: 
+H0: Mean lake temperatures in July across all lakes are similar regardless of depth.
+Ha: Mean lake temperatures in July across all lakes differ by depth.
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -59,10 +72,18 @@ Ha:
 
 ```{r scatterplot}
 #4
-
+ChemPhysRawJuly <- ChemPhysRaw %>%
+  filter(month(sampledate) == 7) %>%
+  select(lakename:daynum, depth, temeprature_C) %>%
+  na.omit()
 
 #5
-
+ggplot(ChemPhysRawJuly, aes(x=depth,y=temperature_C))+
+  geom_point()+
+  geom_smooth(method = lm)+
+  ylim(0, 35)+
+  xlab("Depth (ft)")+
+  ylab("Temperature (C)")
 
 ```
 
@@ -76,7 +97,8 @@ Ha:
 
 ```{r linear.regression}
 #7
-
+Julyregression <- lm(ChemPhysRawJuly$temperature_C ~ ChemPhysRawJuly$depth)
+summary(Julyregression)
 
 ```
 

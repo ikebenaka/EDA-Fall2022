@@ -39,11 +39,15 @@ library(tidyverse)
 library(agricolae)
 library(lubridate)
 library(cowplot)
+library(ggridges)
+library(viridis)
+library(RColorBrewer)
+library(colormap)
 
 ChemPhysRaw <- read.csv(
   "./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",stringsAsFactors = T)
 class(ChemPhysRaw$sampledate)
-ChemPhysRaw$sampledate <- as.Date(ChemPhysRaw$sampledate, format= "%m-%d-%y")
+ChemPhysRaw$sampledate <- as.Date(ChemPhysRaw$sampledate, format= "%m/%d/%y")
 class(ChemPhysRaw$sampledate)
 
 #2
@@ -74,12 +78,13 @@ Ha: Mean lake temperatures in July across all lakes differ by depth.
 #4
 ChemPhysRawJuly <- ChemPhysRaw %>%
   filter(month(sampledate) == 7) %>%
-  select(lakename:daynum, depth, temeprature_C) %>%
+  select(lakename:daynum, depth, temperature_C) %>%
   na.omit()
 
 #5
-ggplot(ChemPhysRawJuly, aes(x=depth,y=temperature_C))+
+TempbyDepth <- ggplot(ChemPhysRawJuly, aes(x=depth, y=temperature_C, color = temperature_C))+
   geom_point()+
+  scale_color_viridis(option = "magma", direction = 1)+
   geom_smooth(method = lm)+
   ylim(0, 35)+
   xlab("Depth (ft)")+
@@ -90,7 +95,7 @@ ggplot(ChemPhysRawJuly, aes(x=depth,y=temperature_C))+
 
 6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
 
-> Answer: 
+> Answer: The regression line in the plot indicates that as depth increases, temperature decreases. The two variables share an inverse relationship. The distribution of the points shows that we do not have a direct linear relationship between the two variables. 
 
 
 7. Perform a linear regression to test the relationship and display the results
@@ -105,7 +110,7 @@ summary(Julyregression)
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer:
+> Answer: Indicated by the multiple R-squared value, this regression model explains about 74% of the total variance in temperature. Given that the p-value of the regression is less than 0.05, the null hypothesis is rejected, and the hypothesis that mean lake temperatures vary by depth across lakes during the month of July. We can see that the relationship between depth and temperature is negative from the **estimate/t-value??**. 
 
 
 ---
@@ -121,10 +126,13 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 ```{r temperature.model}
 #9
 
-
+TempAIC <- lm(data = ChemPhysRawJuly, temperature_C ~ year4 + daynum + depth)
 
 #10
 
+MultRegression <- lm(data = ChemPhysRawJuly, 
+                   temperature_C ~ daynum + depth)
+summary(MultRegression)
 
 ```
 
@@ -140,14 +148,27 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 12. Now we want to see whether the different lakes have, on average, different temperatures in the month of July. Run an ANOVA test to complete this analysis. (No need to test assumptions of normality or similar variances.) Create two sets of models: one expressed as an ANOVA models and another expressed as a linear model (as done in our lessons).
 
 ```{r anova.model}
-#12
+ChemPhysLakesJuly <- ChemPhysRaw %>%
+  filter(month(sampledate) == 7) %>%
+  select(lakename:daynum, lakename, depth, temperature_C) %>%
+  na.omit()
 
+#12
+# Format ANOVA as aov
+Lakes.anova <- aov(data = ChemPhysLakesJuly, temperature_C ~ lakename)
+summary(Lakes.anova)
+
+#results: reject null hypothesis i.e. difference between a pair of group means is statistically significant
+
+# Format ANOVA as lm
+Lakes.anova2 <- lm(data = ChemPhysLakesJuly, temperature_C ~ lakename)
+summary(Lakes.anova2)
 
 ```
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: 
+> Answer: Based on the p-value of the ANOVA model, there is a significant difference for mean water temperature among the lakes.
 
 
 

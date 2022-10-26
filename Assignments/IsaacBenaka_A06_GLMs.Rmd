@@ -110,7 +110,7 @@ summary(Julyregression)
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer: Indicated by the multiple R-squared value, this regression model explains about 74% of the total variance in temperature. Given that the p-value of the regression is less than 0.05, the null hypothesis is rejected, and the hypothesis that mean lake temperatures vary by depth across lakes during the month of July. We can see that the relationship between depth and temperature is negative from the **estimate/t-value??**. 
+> Answer: Indicated by the multiple R-squared value, this regression model shows that about 74% of the total variance in temperature is explained by changes in depth. Given that the p-value of the regression is less than 0.05, the null hypothesis is rejected, and the hypothesis that mean lake temperatures are related to depth across lakes during the month of July. We can see that the relationship between depth and temperature is negative from the **estimate/t-value??**. 
 
 
 ---

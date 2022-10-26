@@ -90,7 +90,9 @@ summary(regression)
 #Exercise 3: Build a scatterplot. Add a line and standard error for the linear regression. Add the regression equation to the plot
 PMbyO3 <- ggplot(EPAair, aes(x=Ozone,y=PM2.5))+
   geom_point()+
-  geom_smooth(method = "lm", se=FALSE)
+  geom_smooth(method = "lm", se=FALSE)+
+  geom_text(x = 100, y = 90, label = eq(EPAair$Ozone,EPAair$PM2.5), parse = TRUE)
+
 print(PMbyO3)
 
 ```
@@ -103,17 +105,24 @@ What other variables can we add to improve model?
 ```{r}
 
 #Exercise 4: Build correlation plots and identify more possible explanatory variables to add to the regression.
+library(dplyr)
+library(corrplot)
+EPAairsubset <- EPAair %>%
+  select(meanlat:Ozone) %>%
+  na.omit()
 
-
-
+EPAaircorr <- cor(EPAairsubset)
+corrplot(EPAaircorr, method = "ellipse")
+corrplot.mixed(EPAaircorr, supper = "ellipse")
 
 #Exercise 5: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
+ozonebyall <- lm(data=EPAairsubset, PM2.5 ~ Ozone + Year + Month + meanlong+ meanlat)
 
-
-
+step(ozonebyall)
 
 #Exercise 6: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
 
+ozonebest-regression <- lm(data=EPAairsubset, PM2.5 ~ Ozone + Month + meanlong + meanlat)
 ```
 
 
@@ -134,7 +143,7 @@ summary(Litter.Totals.anova)
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups$groups
 
-Litter.Totals <- Litter %>%
+Litter.Totals <- Litter.Totals %>%
   mutate( treatgroups = Litter.Totals.groups$groups[plotID,2])
 
 # Graph the results
@@ -153,3 +162,17 @@ print(Litter.Totals.plot)
 ```{r}
 #Exercise 7: Improve the plot```
 
+
+treatgroups=array(0,length(Litter.Totals))
+for( i in length(Litter.Totals)){
+  treatgroups=assign.group(Litter.Totals$plotID)}
+
+Litter.Totals$plotID <- reorder(Litter.Totals$plotID,Litter.Totals$dryMass,FUN=mean)
+
+Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = plotID, y = dryMass)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  stat_summary(geom = "text", fun = max, vjust = -1, size = 3.5,
+               label = Litter.Totals.groups$groups[,2] +
+  labs(x = "Plot ID", y = "Dry Mass (g)") +
+  ylim(0, 85)

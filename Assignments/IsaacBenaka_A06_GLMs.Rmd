@@ -138,8 +138,7 @@ summary(MultRegression)
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: 
-
+> Answer: The AIC recommends that we use the "daynum" and "depth" variables to predict temperature in our multiple regression. 
 
 
 ---
@@ -154,11 +153,9 @@ ChemPhysLakesJuly <- ChemPhysRaw %>%
   na.omit()
 
 #12
-# Format ANOVA as aov
+# Format ANOVA
 Lakes.anova <- aov(data = ChemPhysLakesJuly, temperature_C ~ lakename)
 summary(Lakes.anova)
-
-#results: reject null hypothesis i.e. difference between a pair of group means is statistically significant
 
 # Format ANOVA as lm
 Lakes.anova2 <- lm(data = ChemPhysLakesJuly, temperature_C ~ lakename)
@@ -171,12 +168,16 @@ summary(Lakes.anova2)
 > Answer: Based on the p-value of the ANOVA model, there is a significant difference for mean water temperature among the lakes.
 
 
-
 14. Create a graph that depicts temperature by depth, with a separate color for each lake. Add a geom_smooth (method = "lm", se = FALSE) for each lake. Make your points 50 % transparent. Adjust your y axis limits to go from 0 to 35 degrees. Clean up your graph to make it pretty. 
 
 ```{r scatterplot.2}
 #14.
-
+ggplot(ChemPhysLakesJuly, aes(x=depth,y=temperature_C, color=lakename, alpha=0.5))+
+  geom_point()+
+  geom_smooth(method="lm", se=FALSE)+
+  ylim(0,35)+ 
+  xlab("Depth (ft)")+
+  ylab("Temperature (C)")
 
 ```
 
@@ -184,25 +185,30 @@ summary(Lakes.anova2)
 
 ```{r tukey.test}
 #15
-
+TukeyHSD(Lakes.anova)
 
 ```
 
 16.From the findings above, which lakes have the same mean temperature, statistically speaking, as Peter Lake? Does any lake have a mean temperature that is statistically distinct from all the other lakes?
 
->Answer:
+>Answer: 
 
  
 
 17. If we were just looking at Peter Lake and Paul Lake. What's another test we might explore to see whether they have distinct mean temperatures? 
 
->Answer: 
+>Answer: We could use a t-test for this purpose because a t-test 
 
 
 
 18. Wrangle the July data to include only records for Crampton Lake and Ward Lake. Run the two-sample T-test on these data to determine whether their July temperature are same or different. What does the test say? Are the mean temperatures for the lakes equal? Does that match you answer for part 16?
 
 ```{r t.test}
+ChemPhysJulyCramptonWard <- ChemPhysLakesJuly%>%
+  filter(lakename == "Crampton Lake" | "Ward Lake")
+
+Laketwosample <- t.test(ChemPhysJulyCramptonWard$temperature_C ~ ChemPhysJulyCramptonWard$lakename)
+Laketwosample
 
 ```
 

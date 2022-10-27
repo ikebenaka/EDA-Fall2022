@@ -12,6 +12,7 @@ editor_options:
 #For it to work, the "formatR" package needs to be installed
 
 #install.packages('formatR')
+library(formatR)
 knitr::opts_chunk$set(tidy.opts=list(width.cutoff=40), tidy=TRUE)
 ```
 
@@ -43,6 +44,7 @@ library(ggridges)
 library(viridis)
 library(RColorBrewer)
 library(colormap)
+library(corrplot)
 
 ChemPhysRaw <- read.csv(
   "./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",stringsAsFactors = T)
@@ -63,8 +65,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: Mean lake temperatures in July across all lakes are similar regardless of depth.
-Ha: Mean lake temperatures in July across all lakes differ by depth.
+H0: Depth has no effect on mean lake temperatures in July across all lakes.
+Ha: Depth does have an effect on mean lake temperatures in July across all lakes.
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -76,20 +78,20 @@ Ha: Mean lake temperatures in July across all lakes differ by depth.
 
 ```{r scatterplot}
 #4
-ChemPhysRawJuly <- ChemPhysRaw %>%
+ChemPhysLM <- ChemPhysRaw %>%
   filter(month(sampledate) == 7) %>%
   select(lakename:daynum, depth, temperature_C) %>%
   na.omit()
 
 #5
-TempbyDepth <- ggplot(ChemPhysRawJuly, aes(x=depth, y=temperature_C, color = temperature_C))+
+TempbyDepth <- ggplot(ChemPhysLM, aes(x=depth, y=temperature_C, color = temperature_C))+
   geom_point()+
   scale_color_viridis(option = "magma", direction = 1)+
   geom_smooth(method = lm)+
   ylim(0, 35)+
   xlab("Depth (ft)")+
   ylab("Temperature (C)")
-
+print(TempbyDepth)
 ```
 
 
@@ -102,7 +104,7 @@ TempbyDepth <- ggplot(ChemPhysRawJuly, aes(x=depth, y=temperature_C, color = tem
 
 ```{r linear.regression}
 #7
-Julyregression <- lm(ChemPhysRawJuly$temperature_C ~ ChemPhysRawJuly$depth)
+Julyregression <- lm(ChemPhysLM$temperature_C ~ ChemPhysLM$depth)
 summary(Julyregression)
 
 ```
@@ -110,7 +112,7 @@ summary(Julyregression)
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
-> Answer: Indicated by the multiple R-squared value, this regression model shows that about 74% of the total variance in temperature is explained by changes in depth. Given that the p-value of the regression is less than 0.05, the null hypothesis is rejected, and the hypothesis that mean lake temperatures are related to depth across lakes during the month of July. We can see that the relationship between depth and temperature is negative from the **estimate/t-value??**. 
+> Answer: Indicated by the multiple R-squared value, this regression model shows that about 74% of the total variance in temperature is explained by changes in depth. Given that the p-value of the regression is less than 0.05, we reject the null hypothesis, and we accept the hypothesis that depth has an effect on mean lake temperatures across lakes during the month of July. The degrees of freedom (9,726) represent the number of data points that went into the estimation of the relationship between temperature and depth. We can see that the relationship between depth and temperature is negative from the estimate value for ChemPhysRawJuly$depth.
 
 
 ---
@@ -125,20 +127,26 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r temperature.model}
 #9
+ChemPhysAIC <- ChemPhysRaw %>%
+  filter(month(sampledate) == 7) %>%
+  select(lakename:daynum, depth, temperature_C) %>%
+  na.omit()
 
-TempAIC <- lm(data = ChemPhysRawJuly, temperature_C ~ year4 + daynum + depth)
+
+TempAIC <- lm(data = ChemPhysAIC, temperature_C ~ year4 + daynum + depth)
+step(TempAIC) #should I be using the AIC and stepwise to test more than these three variables?
 
 #10
 
-MultRegression <- lm(data = ChemPhysRawJuly, 
-                   temperature_C ~ daynum + depth)
+MultRegression <- lm(data = ChemPhysAIC, 
+                   temperature_C ~ daynum + depth + year4)
 summary(MultRegression)
 
 ```
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: The AIC recommends that we use the "daynum" and "depth" variables to predict temperature in our multiple regression. 
+> Answer: The AIC recommends that we use the "daynum", "depth", and "year4" variables to predict temperature in our multiple regression. Removing each one from the regression resulted in a worse fit. Indicated by the multiple R-squared value, this regression model shows that about 77% of the total variance in temperature is explained by changes in depth, day number, and year. Including these extra explanatory variables imrpoved the variance value by ~3%.
 
 
 ---
@@ -149,7 +157,7 @@ summary(MultRegression)
 ```{r anova.model}
 ChemPhysLakesJuly <- ChemPhysRaw %>%
   filter(month(sampledate) == 7) %>%
-  select(lakename:daynum, lakename, depth, temperature_C) %>%
+  select(lakename:daynum, depth, temperature_C) %>%
   na.omit()
 
 #12
@@ -165,7 +173,7 @@ summary(Lakes.anova2)
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: Based on the p-value of the ANOVA model, there is a significant difference for mean water temperature among the lakes.
+> Answer: Based on the fact that the p-values from the ANOVA model and linear regression model are less than 0.05, there is a significant difference for mean water temperature among the lakes. 
 
 
 14. Create a graph that depicts temperature by depth, with a separate color for each lake. Add a geom_smooth (method = "lm", se = FALSE) for each lake. Make your points 50 % transparent. Adjust your y axis limits to go from 0 to 35 degrees. Clean up your graph to make it pretty. 
@@ -186,30 +194,34 @@ ggplot(ChemPhysLakesJuly, aes(x=depth,y=temperature_C, color=lakename, alpha=0.5
 ```{r tukey.test}
 #15
 TukeyHSD(Lakes.anova)
-
+Laketest <- HSD.test(Lakes.anova, "lakename", group = TRUE)
+Laketest
 ```
 
 16.From the findings above, which lakes have the same mean temperature, statistically speaking, as Peter Lake? Does any lake have a mean temperature that is statistically distinct from all the other lakes?
 
->Answer: 
+>Answer: Using the difference column, Paul Lake and Ward Lake, have similar mean temperatures to Peter Lake. Based on the results of the HSD.test, no lakes have statistically distinct mean temperature from **all** the other lakes.
 
  
-
 17. If we were just looking at Peter Lake and Paul Lake. What's another test we might explore to see whether they have distinct mean temperatures? 
 
 >Answer: We could use a t-test for this purpose because a t-test 
 
 
-
 18. Wrangle the July data to include only records for Crampton Lake and Ward Lake. Run the two-sample T-test on these data to determine whether their July temperature are same or different. What does the test say? Are the mean temperatures for the lakes equal? Does that match you answer for part 16?
 
 ```{r t.test}
-ChemPhysJulyCramptonWard <- ChemPhysLakesJuly%>%
-  filter(lakename == "Crampton Lake" | "Ward Lake")
+ChemPhysCramptonWard <- ChemPhysRaw %>%
+  filter(lakename %in% c("Paul Lake", "Peter Lake")) %>%
+  filter(month(sampledate) == 7) %>%
+  select(lakename:daynum, depth, temperature_C) %>%
+  na.omit()
 
-Laketwosample <- t.test(ChemPhysJulyCramptonWard$temperature_C ~ ChemPhysJulyCramptonWard$lakename)
+Laketwosample <- t.test(ChemPhysCramptonWard$temperature_C ~ ChemPhysCramptonWard$lakename)
 Laketwosample
 
 ```
 
->Answer: 
+>Answer: Our p-value is 0.013 which is less than 0.05, so we reject the 
+null hypothesis that the mean temperature between the two lakes are the same.
+The mean temperatures for the lakes are not equal. The mean for Paul Lake is 13.814 while the mean for Peter Lake is 13.316. This result does not match the answer for problem 16, which indicated that Peter Lake and Paul Lake had similar mean temperatures.

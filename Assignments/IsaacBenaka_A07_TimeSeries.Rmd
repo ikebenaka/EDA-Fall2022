@@ -42,6 +42,7 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 getwd()
 
 library(tidyverse)
+library(dplyr)
 library(lubridate)
 library(zoo)
 library(trend)
@@ -71,8 +72,8 @@ O18 <- read.csv(
 O19 <- read.csv(
   "./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv",stringsAsFactors = T)
 
-GaringerOzonelist <- list(O10, O11, O12, O13, O14, O15, O16, O17, O18, O19)
-GaringerOzone <- GaringerOzonelist %>% reduce(full_join, by="POC")
+GaringerOzone <- bind_rows(O10, O11, O12, O13, O14, O15, O16, O17, O18, O19)
+
 ```
 
 ## Wrangle
@@ -88,13 +89,19 @@ GaringerOzone <- GaringerOzonelist %>% reduce(full_join, by="POC")
 ```{r}
 # 3
 GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%m/%d/%Y")
+class(GaringerOzone$Date)
+
 # 4
 GaringerOzone <- GaringerOzone %>%
-  filter(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
+  select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
+
 # 5
+Days <- data.frame(Date=seq(as.Date("2010-01-01"), as.Date("2019-12-31"), by = "day"))
+class(Days$Date)
+class(GaringerOzone$Date)
 
 # 6
-
+GaringerOzone <- left_join(Days,GaringerOzone, by = "Date")
 
 ```
 
@@ -104,10 +111,14 @@ GaringerOzone <- GaringerOzone %>%
 
 ```{r}
 #7
+ggplot(GaringerOzone, (aes(x=Date,y=Daily.Max.8.hour.Ozone.Concentration)))+
+  geom_point()+
+  ylab("Daily Ozone Concentration (ppm)")+
+  geom_smooth(method="lm")
 
 ```
 
->Answer:
+>Answer: The trend line appears to show that ozone concentrations are decreasing over time.
 
 ## Time Series Analysis
 
@@ -117,6 +128,8 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 
 ```{r}
 #8
+GaringerOzone.clean <- GaringerOzone %>%
+  mutate(Ozone.clean = zoo::na.approx(Daily.Max.8.hour.Ozone.Concentration))
 
 ```
 
@@ -127,7 +140,9 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 
 ```{r}
 #9
+GaringerOzone.monthly <- 
 
+  
 ```
 
 

@@ -135,7 +135,7 @@ GaringerOzone.clean <- GaringerOzone %>%
 
 ```
 
-> Answer: 
+> Answer: We chose not to use piecewise interpolation because it copies data from nearby cells which would not work well with the fluctuating data we are dealing with. We chose not to use spline interpolation because it uses a quadratic function to replace NAs which would not result in a good fit to our data.
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -166,9 +166,12 @@ GaringerOzone.monthly.plot <- GaringerOzone.clean %>%
 f_day <- day(first(GaringerOzone.clean$Date))
 f_month <- month(first(GaringerOzone.clean$Date))
 f_year <- year(first(GaringerOzone.clean$Date))
-GaringerOzone.daily.ts <- ts(GaringerOzone.clean$Ozone.clean,  start=c(f_year,f_month,f_day), frequency=365)
+l_day <- day(last(GaringerOzone.clean$Date))
+l_month <- month(last(GaringerOzone.clean$Date))
+l_year <- year(last(GaringerOzone.clean$Date))
+GaringerOzone.daily.ts <- ts(GaringerOzone.clean$Ozone.clean,  start=c(f_year,f_month,f_day), end=c(l_year,l_month,l_day), frequency=365)
 
-GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$mean.Ozone.Conc, start=c(2010,1), frequency = 12)
+GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$mean.Ozone.Conc, start=c(2010,1), end=c(2019,12), frequency = 12)
 ```
 
 
@@ -208,7 +211,7 @@ ggplot(GaringerOzone.monthly.plot, aes(x=Date,y=mean.Ozone.Conc))+
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: The data shows decreasing ozone concentrations through the 2010s at this station (tau = -0.0456, 2-sided pvalue =0.00051075).
+> Answer: The data shows decreasing ozone concentrations through the 2010s at this station (tau = -0.0638, 2-sided pvalue =5.3605e-06).
 
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.

@@ -156,7 +156,7 @@ Note that the decomposition can yield negative values when we apply a seasonal a
 
 ## Trend analysis
 
-Two types of trends may be present in our time series dataset: **monotonic/deterministic** or **stochastic**. Monotonic trends are a gradual shift over time that is consistent in direction, for example in response to land use change. 
+Two types of trends may be present in our time series dataset: **monotonic/deterministic** or **stochastic**. Monotonic trends are a gradual shift over time that is consistent in direction, for example in response to land use change. Stochastic trend changes over time.
 
 A third type of trend we haven't talked about is the **step** trend, also knows as a level shift. Step trends are a distinct shift at a given time point, for example in response to a policy being enacted. 
 
@@ -270,7 +270,7 @@ Here are some great resources for examining ACF and PACF lags under different fo
 https://nwfsc-timeseries.github.io/atsa-labs/sec-tslab-autoregressive-ar-models.html
 https://nwfsc-timeseries.github.io/atsa-labs/sec-tslab-moving-average-ma-models.html
 
-ARMA models require stationary data. This means that there is no monotonic trend over time and there is also equal variance and covariance across the time series. The function `adf.test` will determine whether our data are stationary. The null hypothesis is that the data are not stationary, so we infer that the data are stationary if the p-value is < 0.05.
+ARMA models require stationary data. This means that there is no monotonic trend over time and there is also equal variance and covariance across the time series. The function `adf.test` will determine whether our data are stationary. The null hypothesis is that the data are not stationary, so we infer that the data are stationary if the p-value is < 0.05. 
 
 While some processes might be easy to identify, it is often complicated to predict the order of AR and MA processes. To get around this issue, it is often necessary to run multiple potential formulations of the model and see which one results in the most parsimonious fit using AIC. The function `auto.arima` does this automatically.
 

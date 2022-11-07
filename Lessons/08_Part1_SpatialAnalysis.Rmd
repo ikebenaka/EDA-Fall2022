@@ -107,7 +107,7 @@ EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC2021_Processed.csv", strin
 EPAair.sites <- EPAair %>% 
   group_by(Site.Name, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
   summarize(
-    mean_Ozone = mean(Ozone, na.rm=T),    #What does "na.rm=T" do? Is it necessary?
+    mean_Ozone = mean(Ozone, na.rm=T),    #What does "na.rm=T" do? Is it necessary? 
     mean_PM25 = mean(PM2.5, na.rm=T),
     count_all = n(),
     count_Ozone = sum(!is.na(Ozone)),
@@ -119,6 +119,7 @@ EPAair.sf <- EPAair.sites %>%
            crs=4326)
 
 #View the data using the methods above...
+mapview(EPAair.sf)
 
 ```
 
@@ -126,12 +127,12 @@ EPAair.sf <- EPAair.sites %>%
 
 ```{r Create a spatial dataframe from scratch}
 #First create a simple feature geometry object ("sfg")
-sfg_GraingerHall <- st_point(c(-78.9427,36.00465))
+sfg_GraingerHall <- st_point(c(-78.9427,36.00465)) #creates a simple feature point
 class(sfg_GraingerHall)
 mapview(sfg_GraingerHall)
 
 #Upgrade to a simple feature geometry column by adding a crs 
-sfc_GraingerHall <- st_sfc(sfg_GraingerHall,crs=4326)
+sfc_GraingerHall <- st_sfc(sfg_GraingerHall,crs=4326) #locates the point on Earth
 class(sfc_GraingerHall)
 mapview(sfc_GraingerHall)
 
@@ -224,7 +225,7 @@ Say we want to the distance between our EPA sites and the nearest Gas Plant. We 
 
 ```{r Transform the dataset}
 #Transform the datasets to use UTM 17 N, WGS84
-EPAair.sf.utm <- st_transform(EPAair.sf,32617)
+EPAair.sf.utm <- st_transform(EPAair.sf,32617) #transform = re-project
 GasPlants.utm <- st_transform(GasPlants,32617)
 
 #Have a look at the coordinate associated with the geometries
@@ -245,7 +246,7 @@ mean_distances <-  rowMeans(distance_matrix)
 EPAair.sf.utm  <-  EPAair.sf.utm %>% 
   bind_cols(mean_distances)
 
-
+#try to make plot where EPA site points are larger based on their distance from gas plants.
 
 ```
 

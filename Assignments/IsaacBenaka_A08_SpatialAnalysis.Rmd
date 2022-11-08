@@ -1,6 +1,6 @@
 ---
 title: "Assignment 8: Spatial Analysis in R"
-author: "Student Name"
+author: "Isaac Benaka"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -31,10 +31,14 @@ This exercise accompanies the lessons in Environmental Data Analytics (ENV872L) 
 
 ```{r Prepare workspace}
 #1.
-
+getwd()
 
 #2. 
-
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(mapview)
+library(RColorBrewer)
 
 ```
 
@@ -48,19 +52,20 @@ In this exercise, we will be exploring stream gage height data in Nebraska corre
 
 ```{r Read the county data into an sf dataframe}
 #3. Read in Counties shapefile into an sf dataframe, filtering for just NE counties
-
+county_sf <- st_read("./Data/Spatial/cb_2018_us_county_20m.shp") %>%
+  filter(STATEFP == 31)
 
 #4. Reveal the CRS of the counties features
-
+st_crs(county_sf)
 
 #5. Plot the data
+mapview(county_sf)
 
 ```
 
 6. What is the EPSG code of the Counties dataset? Is this a geographic or a projected coordinate reference system? (Or, does this CRS use angular or planar coordinate units?) To what datum is this CRS associated? (Tip: look the EPSG code on <https://spatialreference.org>) 
 
-> ANSWER: 
-> 
+> ANSWER: The EPSG code of this data is 4269. This is a geographic coordinate system. This data uses the North American 1983 datum.
 
 
 ### Read in gage locations csv as a dataframe, then display the column names it contains
@@ -73,16 +78,16 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 
 ```{r Read in USGS Gage Locations}
 #7. Read in gage locations csv as a dataframe
-
+gage <- read_csv("./Data/Raw/NWIS_SiteInfo_NE_RAW.csv")
 
 #8. Reveal the names of the columns
-
+colnames(gage)
 
 ```
 
 9. What columns in the dataset contain the x and y coordinate values, respectively?  
-> ANSWER:
-> 
+
+> ANSWER: dec_lat_va contains the y coordinates and dec_long_va contains the x coordinates.
 
 
 ### Convert the dataframe to a spatial features ("sf") dataframe
@@ -94,17 +99,17 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 
 ```{r Convert dataframe to sf dataframe}
 #10. Convert to an sf object
-
-
+gage_sf <- gage %>% 
+  st_as_sf(coords = c('dec_long_va','dec_lat_va'),
+           crs=4269)
 #11. Re-examine the column names
-
+colnames(gage_sf)
 
 ```
 
 12. What new field(s) appear in the sf dataframe created? What field(s), if any, disappeared?
 
->ANSWER: 
->
+>ANSWER: The "dec_lat_va" and "dec_long_va" fields disappeared and the "geometry" field was added to the dataframe.
 
 
 ### Plot the gage locations on top of the counties
@@ -116,7 +121,11 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 
 ```{r Plot the spatial features}
 #13. Plot the gage locations atop the county features
-
+ggplot()+
+  geom_sf(data=county_sf)+
+  geom_sf(data=gage_sf, color="red", size=2)+
+  labs(title="NWIS Gage Locations in Nebraska")+
+  xlab("Isaac Benaka")
 
 ```
 
@@ -135,19 +144,20 @@ Lastly, we want to attach some gage height data to our site locations. I've cons
 
 ```{r}
 #14. Read the site flow data into a data frame
-
+gageheight <- read_csv("./Data/Raw/NWIS_SiteFlowData_NE_RAW.csv")
 
 #15. Show the column names
-
+colnames(gageheight)
 
 #16. Join the flow data to our NWIS gage location spatial dataframe
-
+gage_sf_join <- gage_sf %>% 
+  inner_join(gageheight, by = c("site_no" = "site_no"))
 
 #17. Show the column names of the joined dataset
-
+colnames(gage_sf_join)
 
 #18. Show the dimensions of this joined dataset
-
+dim(gage_sf_join)
 
 ```
 

@@ -80,11 +80,12 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
-
-
+huc8_sf <- st_read("./Data/Spatial/NCHUC8.shp")
 
 #View the data as a map, colored by the acreage in each
-
+ggplot()+
+  geom_sf(data=huc8_sf, aes(fill = ACRES))+
+  scale_fill_gradient2(high="blue")
 
 ```
 
@@ -94,12 +95,14 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
-
-
+HUC.Neuse<- st_read('./Data/Spatial/NCHUC8.shp') %>% 
+  filter(SUBBASIN == "Upper Neuse")
 
 #Create a map
-
-
+ggplot()+
+  geom_sf(data=huc8_sf, color="orange")+
+  geom_sf(data=HUC.Neuse, color="purple")
+  
 ```
 
 
@@ -114,9 +117,10 @@ The URL '<https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Ene
 
 ```{r}
 #Compute HUC8 wind energy
-
-
-
+wind <- read.csv("https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv", colclasses = c(HUC_12 = factor)) %>%
+  mutate(HUC_8 = substr(HUC_12,1,8)) %>%
+  group_by(HUC_8) %>%
+  summarize(kWhkm2day = sum(kWhkm2day))
 
 #Join to HUC_8 features
 
@@ -134,14 +138,18 @@ Aggregate the HUC_8 data on the `DWQ_Basin` attribute, computing the sum of the 
 
 ```{r Aggregate the HUC data on an attribute, saving as huc2_sf}
 #List the unique values in the DWQ_Basin field
-
+unique(huc8_sf$DWQ_Basin)
 
 
 #Summarize on DWQ Basin value
-
+huc2_sf <- huc8_sf %>% 
+  group_by(DWQ_Basin) %>% 
+  summarize(acres = sum(ACRES), sq_miles = sum(SQ_MILES))
 
 
 #Map the data
+ggplot()+ 
+  geom_sf(data=huc2_sf,aes(fill=acres))
 
 
 ```
@@ -168,10 +176,10 @@ Select the counties in the "Triangle" (Chatham, Durham, Orange, and Wake). Then 
 
 ```{r EXERCISE: Clipping}
 #Select the Triangle counties from the sf_counties dataframe
+neuse_sf <- huc2_utm %>% 
+  filter(DWQ_Basin == "Neuse")
 
 
-
-  
 #Grab the intersecting HUC_8s
 
 

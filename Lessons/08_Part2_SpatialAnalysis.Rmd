@@ -344,7 +344,7 @@ myMap = mapview(neuse_sf,
 #Show the map
 myMap
 
-#Select intersecting counties using matrix subsetting
+#Select intersecting counties using matrix subsetting !!!
 neuse_intersect_1 <- counties_sf_utm[neuse_sf,]
 
 #Select intersecting counties using the `filter()` command

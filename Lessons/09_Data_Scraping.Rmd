@@ -202,7 +202,7 @@ df_withdrawals <- data.frame("Month" = rep(1:12),
 ggplot(df_withdrawals,aes(x=Date,y=Avg_Withdrawals_mgd)) + 
   geom_line() + 
   geom_smooth(method="loess",se=FALSE) +
-  labs(title = paste("2020 Water usage data for",the_registrant),
+  labs(title = paste(the_year, "Water usage data for",the_registrant),
        subtitle = the_facility_name,
        y="Withdrawal (mgd)",
        x="Date")
@@ -324,7 +324,7 @@ This website gives a nice example of this: <https://dcl-prog.stanford.edu/purrr-
 
 ```{r Scrape.all.2020.data}
 
-#Subset the facilities
+#Subset the facilities (grab 20 random ids)
 the_facility_ids_subset <-  sample(the_facility_ids,20)
 
 #Create a list of the year we want, the same length as the vector above

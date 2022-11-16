@@ -1,6 +1,6 @@
 ---
 title: "Assignment 09: Data Scraping"
-author: "Student Name"
+author: "Isaac Benaka"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -28,8 +28,10 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 
 ```{r, message = FALSE}
 #1
-
-
+getwd()
+library(tidyverse)
+library(rvest)
+library(lubridate)
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2021 Municipal Local Water Supply Plan (LWSP): 
@@ -41,7 +43,7 @@ Indicate this website as the as the URL to be scraped. (In other words, read the
 
 ```{r set.the.scraping.website}
 #2
-
+webpage <- read_html("https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2021")
 
 ```
 
@@ -61,13 +63,21 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r scrape.the.data}
 #3
-water.system.name <- 
+water.system.name <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
+  html_text()
   
-pswid <- 
+pswid <- webpage %>% 
+  html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% 
+  html_text()
   
-ownership <- 
+ownership <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% 
+  html_text()
   
-max.withdrawals.mgd <- 
+max.withdrawals.mgd <- webpage %>% 
+  html_nodes("th~ td:nth-child(3) , th~ td+ td:nth-child(6) , th~ td:nth-child(9)") %>%
+  html_text()
 
 ```
 
@@ -82,7 +92,14 @@ max.withdrawals.mgd <-
 
 ```{r create.a.dataframe.from.scraped.data}
 #4
-
+df_withdrawals <- data.frame(
+                             "Month" = rep(1:12),
+                             "Year" = rep(2021),
+                             "Date" = my(paste(Month,"-",Year)),
+                             "Water_System_Name" = rep(water.system.name),
+                             "PSWID" = rep(pswid),
+                             "Ownership" = rep(ownership),
+                             "Max_Withdrawals_mgd" = as.numeric(max.withdrawals.mgd))
 
 
 #5
